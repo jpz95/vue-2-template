@@ -1,8 +1,7 @@
 import Vue from 'vue';
+import App from './app';
 
-var app = new Vue({
+var main = new Vue({
   el: '#root',
-  data: {
-    message: 'Hello Vue!'
-  }
+  render: h => h(App)
 });
