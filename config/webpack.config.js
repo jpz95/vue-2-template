@@ -47,14 +47,11 @@ module.exports = function(webpackEnv) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: [
-      // Include an alternative client for WebpackDevServer. A client's job is to
-      // connect to WebpackDevServer by a socket and get notified about changes.
-      // When you save a file, the client will either apply hot updates (in case
-      // of CSS changes), or refresh the page (in case of JS changes). When you
-      // make a syntax error, this client will display a syntax error overlay.
-      // Note: instead of the default WebpackDevServer client, we use a custom one
-      // to bring better experience for Create React App users. You can replace
-      // the line below with these two lines if you prefer the stock client:
+      // A client's job is to connect to WebpackDevServer by a socket and get
+      // notified about changes. When you save a file, the client will either
+      // apply hot updates (in case of CSS changes), or refresh the page (in
+      // case of JS changes). When you make a syntax error, this client will
+      // display a syntax error overlay.
       isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
       // Finally, this is your app's code:
       paths.appIndexJs,
@@ -96,7 +93,7 @@ module.exports = function(webpackEnv) {
       jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
-      globalObject: 'this',
+      // globalObject: 'this',
     },
     optimization: {
       minimize: isEnvProduction,
@@ -104,11 +101,10 @@ module.exports = function(webpackEnv) {
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
       // TODO figure out why this is causing a crash.
-      // maybe something to do with websockets?? Need to create a bare minimum build.
-      // splitChunks: {
-      //   chunks: 'all',
-      //   name: false, // throws error
-      // },
+      splitChunks: {
+        chunks: 'all',
+        name: false, // throws error
+      },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
       // https://github.com/facebook/create-react-app/issues/5358
@@ -127,6 +123,7 @@ module.exports = function(webpackEnv) {
       // These are the reasonable defaults supported by the Node ecosystem.
       extensions: paths.moduleFileExtensions.map(ext => `.${ext}`),
       alias: {
+        // Use ES5 distribution of Vue.js
         vue$: "vue/dist/vue.esm.js",
         // Allows for better profiling with ReactDevTools
         // ...(isEnvProductionProfile && {
@@ -147,7 +144,7 @@ module.exports = function(webpackEnv) {
           test: /\.js$/,
           exclude: /node_modules/,
           use: {
-              loader: 'babel-loader'
+              loader: 'babel-loader',
           }
         },
       ]
@@ -223,6 +220,7 @@ module.exports = function(webpackEnv) {
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.
     node: {
+      process: 'mock',
       module: 'empty',
       dgram: 'empty',
       dns: 'mock',

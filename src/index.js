@@ -2,6 +2,6 @@ import Vue from 'vue';
 import App from './app';
 
 var main = new Vue({
-  el: '#root',
+  el: '#app',
   render: h => h(App)
 });

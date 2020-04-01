@@ -57,13 +57,6 @@ module.exports = function(proxy, allowedHost) {
     // in the Webpack development configuration. Note that only changes
     // to CSS are currently hot reloaded. JS changes will refresh the browser.
     hot: true,
-    // Use 'ws' instead of 'sockjs-node' on server since we're using native
-    // websockets in `webpackHotDevClient`.
-    // TODO figure out why this caused an issue (also, what is it for??)
-    // transportMode: 'ws',
-    // Prevent a WS client from getting injected as we're already including
-    // `webpackHotDevClient`.
-    injectClient: false,
     // It is important to tell WebpackDevServer to use the same "root" path
     // as we specified in the config. In development, we always serve from /.
     publicPath: '/',
@@ -89,7 +82,7 @@ module.exports = function(proxy, allowedHost) {
         'g'
       )
     },
-    overlay: false,
+    overlay: true,
     historyApiFallback: {
       // Paths with dots should still use the history fallback.
       // See https://github.com/facebook/create-react-app/issues/387.
@@ -105,6 +98,7 @@ module.exports = function(proxy, allowedHost) {
         // This registers user provided middleware for proxy reasons
         require(paths.proxySetup)(app);
       }
-    }
+    },
+    stats: 'verbose'
   };
 };
