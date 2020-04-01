@@ -59,6 +59,7 @@ module.exports = function(proxy, allowedHost) {
     hot: true,
     // Use 'ws' instead of 'sockjs-node' on server since we're using native
     // websockets in `webpackHotDevClient`.
+    // TODO figure out why this caused an issue (also, what is it for??)
     // transportMode: 'ws',
     // Prevent a WS client from getting injected as we're already including
     // `webpackHotDevClient`.

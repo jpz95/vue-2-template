@@ -103,6 +103,8 @@ module.exports = function(webpackEnv) {
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
+      // TODO figure out why this is causing a crash.
+      // maybe something to do with websockets?? Need to create a bare minimum build.
       // splitChunks: {
       //   chunks: 'all',
       //   name: false, // throws error
@@ -191,6 +193,7 @@ module.exports = function(webpackEnv) {
       //   `index.html`
       // - "entrypoints" key: Array of files which are included in `index.html`,
       //   can be used to reconstruct the HTML if necessary
+      // TODO uncomment if we can use plugin
       // new ManifestPlugin({
       //   fileName: 'asset-manifest.json',
       //   publicPath: publicPath,
