@@ -93,17 +93,40 @@ module.exports = function(webpackEnv) {
       jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
-      // globalObject: 'this',
+      globalObject: 'this',
     },
     optimization: {
       minimize: isEnvProduction,
-      // Automatically split vendor and commons
-      // https://twitter.com/wSokra/status/969633336732905474
-      // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-      // TODO figure out why this is causing a crash.
       splitChunks: {
         chunks: 'all',
-        name: false, // throws error
+        maxInitialRequests: Infinity,
+        // Splits chunks if it exceeds this threshold.
+        minSize: 15000, // 15 kb
+        automaticNameDelimiter: '-',
+        // TODO report bug for html-webpack-plugin.
+        // plugin defines 'vendors' chunk's name as undefined, filtering it out
+        // when determining which chunks to insert as scripts into html.
+        name: false,
+        cacheGroups: {
+          // Creates a named vendor chunk, if its greater than 15kb.
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module) {
+              // get the name. E.g. node_modules/packageName/not/this/part.js
+              // or node_modules/packageName
+              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+              // npm package names are URL-safe, but some servers don't like @ symbols
+              return `npm.${packageName.replace('@', '')}`;
+            },
+          },
+          // Creates a generic vendors chunk (default group).
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            name: 'vendors',
+          },
+        },
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
