@@ -159,6 +159,7 @@ module.exports = function(webpackEnv) {
     module: {
       strictExportPresence: true,
       rules: [
+        // { eslint }
         {
           test: /\.vue$/,
           loader: 'vue-loader',
@@ -170,7 +171,37 @@ module.exports = function(webpackEnv) {
               loader: 'babel-loader',
           }
         },
-      ]
+        {
+          test: /\.css$/,
+          oneOf: [
+            {
+              // matches `<style module>`
+              resourceQuery: /module/,
+              use: [
+                'vue-style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    modules: {
+                      localIdentName: isEnvProduction
+                        ? '[hash:base64]'
+                        : '[path][name]__[local]',
+                    },
+                    sourceMap: isEnvDevelopment,
+                  }
+                },
+              ],
+            },
+            {
+              // matches plain `<style>` or `<style scoped>`
+              use: [
+                'vue-style-loader',
+                'css-loader'
+              ],
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new VueLoaderPlugin(),
