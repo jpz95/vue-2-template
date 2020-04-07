@@ -3,8 +3,9 @@ const modules = require('./modules');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const webpack = require('webpack');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const appPackageJson = require(paths.appPackageJson);
 
@@ -178,7 +179,13 @@ module.exports = function(webpackEnv) {
               // matches `<style module>`
               resourceQuery: /module/,
               use: [
-                'vue-style-loader',
+                isEnvDevelopment && {
+                  loader: 'vue-style-loader',
+                },
+                isEnvProduction && {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: shouldUseRelativeAssetPaths ? { publicPath: '../../' } : {},
+                },
                 {
                   loader: 'css-loader',
                   options: {
@@ -188,16 +195,29 @@ module.exports = function(webpackEnv) {
                         : '[path][name]__[local]',
                     },
                     sourceMap: isEnvDevelopment,
-                  }
+                  },
                 },
-              ],
+                // TODO add post-css loader
+              ].filter(Boolean),
             },
             {
               // matches plain `<style>` or `<style scoped>`
               use: [
-                'vue-style-loader',
-                'css-loader'
-              ],
+                isEnvDevelopment && {
+                  loader: 'vue-style-loader',
+                },
+                isEnvProduction && {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: shouldUseRelativeAssetPaths ? { publicPath: '../../' } : {},
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    sourceMap: isEnvDevelopment,
+                  },
+                },
+                // TODO add post-css loader
+              ].filter(Boolean),
             },
           ],
         },
@@ -238,6 +258,13 @@ module.exports = function(webpackEnv) {
       new webpack.DefinePlugin(env.stringified),
       // This is necessary to emit hot updates (currently CSS only):
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+      isEnvProduction &&
+        new MiniCssExtractPlugin({
+          // Options similar to the same options in webpackOptions.output
+          // both options are optional
+          filename: 'static/css/[name].[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding
       //   output file so that tools can pick it up without having to parse
