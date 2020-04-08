@@ -189,9 +189,13 @@ module.exports = function(webpackEnv) {
             name(module) {
               // get the name. E.g. node_modules/packageName/not/this/part.js
               // or node_modules/packageName
-              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+              const packageName =
+                module
+                  .context
+                  .match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
 
-              // npm package names are URL-safe, but some servers don't like @ symbols
+              // npm package names are URL-safe, but some servers
+              // don't like @ symbols
               return `npm.${packageName.replace('@', '')}`;
             },
           },
@@ -250,7 +254,7 @@ module.exports = function(webpackEnv) {
           test: /\.css$/,
           oneOf: [
             {
-              // matches `<style module>`
+              // matches `<style module>` blocks
               resourceQuery: /module/,
               use: [
                 isEnvDevelopment && {
@@ -258,7 +262,9 @@ module.exports = function(webpackEnv) {
                 },
                 isEnvProduction && {
                   loader: MiniCssExtractPlugin.loader,
-                  options: shouldUseRelativeAssetPaths ? { publicPath: '../../' } : {},
+                  options: shouldUseRelativeAssetPaths
+                    ? { publicPath: '../../' }
+                    : {},
                 },
                 {
                   loader: 'css-loader',
@@ -271,18 +277,35 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvDevelopment,
                   },
                 },
-                // TODO add post-css loader
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009',
+                        },
+                        stage: 3,
+                      }),
+                    ],
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
+                  },
+                },
               ].filter(Boolean),
             },
             {
-              // matches CSS files and plain `<style>` or `<style scoped>`
+              // matches CSS files and plain `<style>` or `<style scoped>` blocks
               use: [
                 isEnvDevelopment && {
                   loader: 'vue-style-loader',
                 },
                 isEnvProduction && {
                   loader: MiniCssExtractPlugin.loader,
-                  options: shouldUseRelativeAssetPaths ? { publicPath: '../../' } : {},
+                  options: shouldUseRelativeAssetPaths
+                    ? { publicPath: '../../' }
+                    : {},
                 },
                 {
                   loader: 'css-loader',
@@ -290,7 +313,22 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvDevelopment,
                   },
                 },
-                // TODO add post-css loader
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009',
+                        },
+                        stage: 3,
+                      }),
+                    ],
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
+                  },
+                },
               ].filter(Boolean),
             },
           ],
