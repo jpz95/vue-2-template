@@ -239,17 +239,36 @@ module.exports = function(webpackEnv) {
       strictExportPresence: true,
       rules: [
         // { eslint }
+        // Process application Vue files.
         {
           test: /\.vue$/,
           loader: 'vue-loader',
         },
+        // Process application JS with Babel.
         {
           test: /\.js$/,
-          exclude: /node_modules/,
+          include: paths.appSrc,
           use: {
-              loader: 'babel-loader',
-          }
+            loader: 'babel-loader',
+            options: {
+              // This is a feature of `babel-loader` for webpack (not Babel itself).
+              // It enables caching results in ./node_modules/.cache/babel-loader/
+              // directory for faster rebuilds.
+              cacheDirectory: true,
+              // TODO update to babel 7, there might be a mismatch
+              // GZip compression has barely any benefits, for either modes.
+              // https://github.com/facebook/create-react-app/issues/6846
+              // cacheCompression: false,
+              // compact: isEnvProduction,
+            },
+          },
         },
+        // "postcss" loader applies autoprefixer to our CSS.
+        // "css" loader resolves paths in CSS and adds assets as dependencies.
+        // "vue-style" loader turns CSS and `<style>` blocks into JS modules that
+        // inject <style> tags into the index.html.
+        // In production, we use MiniCSSExtractPlugin to extract that CSS to a
+        // file, but in development, "style" loader enables hot editing of CSS.
         {
           test: /\.css$/,
           oneOf: [
