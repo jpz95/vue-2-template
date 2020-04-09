@@ -288,12 +288,13 @@ module.exports = function(webpackEnv) {
                 {
                   loader: 'css-loader',
                   options: {
+                    importLoaders: 1,
                     modules: {
                       localIdentName: isEnvProduction
                         ? '[hash:base64]'
                         : '[path][name]__[local]',
                     },
-                    sourceMap: isEnvDevelopment,
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
                 {
@@ -329,7 +330,8 @@ module.exports = function(webpackEnv) {
                 {
                   loader: 'css-loader',
                   options: {
-                    sourceMap: isEnvDevelopment,
+                    importLoaders: 1,
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
                 {
