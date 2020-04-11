@@ -13,10 +13,13 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 
+const chalk = require('chalk');
+const dedent = require('dedent');
 const fs = require('fs-extra');
 const webpack = require('webpack');
 const configFactory = require('../config/webpack.config');
 const paths = require("../config/paths");
+const printNewLine = require('../config/utils/print-new-line');
 
 // load "production" config
 const config = configFactory("production");
@@ -27,16 +30,30 @@ copyPublicFolder();
 
 // feed config into webpack
 build().then((result) => {
-  console.log("we did it!", result.testMessage);
+  console.log(`${chalk.green('Build compiled successfully.')}`);
+  console.log(
+    `Deployable bundle available at
+    ${chalk.blue(paths.appBuild)}`
+  );
+  console.log("we did it!", result.stats);
 
 }).catch((err) => {
-  if (err && err.message) {
-    console.log(err.message);
-  }
+  const message = err && err.message;
+
+  printNewLine(2);
+  console.log(dedent`
+    ${chalk.red('Failed to build bundle')}
+    ${message || err}
+  `);
+  printNewLine(1);
+
   process.exit(1);
 });
 
 function build() {
+  console.log('Creating an optimized production build...');
+  printNewLine(1);
+
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
@@ -44,35 +61,47 @@ function build() {
 
       if (err) {
         if (!err.message) {
-          return reject({ message: err });
+          return reject(new Error(err));
         }
 
-        // react build creates array of errors/warnings
+        let errMessage = err.message;
+
+        // Add additional information for postcss errors
+        if (Object.prototype.hasOwnProperty.call(err, 'postcssNode')) {
+          errMessage
+            += '\nCompileError: Begins at CSS selector '
+            + err['postcssNode'].selector;
+        }
+
         messages = {
-          message: err.message,
-          type: "error"
+          errors: [errMessage],
+          warnings: [],
         };
 
       } else {
 
-        // react build creates messages from 'stats'
-        messages = {
-          message: "yaya",
-          type: "success"
-        };
+        messages = stats.toJson({
+          all: false,
+          errors: true,
+          wanrings: true,
+        });
       }
 
-      if (messages.type === "error") {
-        // should check for number of errors and return first
-        return reject(messages);
+      if (messages.errors.length) {
+        // Only keep the first error. Others are often indicative
+        // of the same problem, but confuse the reader with noise.
+        if (messages.errors.length > 1) {
+          messages.errors.length = 1;
+        }
+        const firstError = messages.errors.join();
+        return reject(new Error(firstError));
       }
 
       return resolve({
         stats,
-        testMessage: messages.message,
-        warnings: messages.warnings
-      })
-    })
+        warnings: messages.warnings,
+      });
+    });
   });
 }
 
