@@ -1,7 +1,4 @@
 const path = require('path');
-const modules = require('./modules');
-const paths = require('./paths');
-const getClientEnvironment = require('./env');
 const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -9,6 +6,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const modules = require('./utils/modules');
+const paths = require('./utils/paths');
+const getClientEnvironment = require('./utils/env');
 
 const appPackageJson = require(paths.appPackageJson);
 

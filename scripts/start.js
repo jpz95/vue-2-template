@@ -10,7 +10,7 @@ process.on('unhandledRejection', err => {
 });
 
 // Ensure environment variables are read.
-require('../config/env');
+require('../config/utils/env');
 
 
 const chalk = require('chalk');
@@ -18,7 +18,7 @@ const dedent = require('dedent');
 const fs = require('fs');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const paths = require('../config/paths');
+const paths = require('../config/utils/paths');
 const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpack-dev-server.config');
 const printNewLine = require('../config/utils/print-new-line');

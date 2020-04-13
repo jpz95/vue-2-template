@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const paths = require('./paths');
+const paths = require('./utils/paths');
 
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
 const host = process.env.HOST || '0.0.0.0';
