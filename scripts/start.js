@@ -13,12 +13,15 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 
+const chalk = require('chalk');
+const dedent = require('dedent');
 const fs = require('fs');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpack-dev-server.config');
+const printNewLine = require('../config/utils/print-new-line');
 
 const config = configFactory('development');
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
@@ -32,9 +35,9 @@ try {
   compiler = webpack(config);
 } catch (err) {
   console.log('Failed to compile.');
-  console.log();
+  printNewLine();
   console.log(err.message || err);
-  console.log();
+  printNewLine();
   process.exit(1);
 }
 
@@ -48,9 +51,26 @@ compiler.hooks.invalid.tap('invalid', () => {
 
 let isFirstCompile = true;
 
+// "done" event fires when webpack has finished recompiling the bundle.
+// Whether or not you have warnings or errors, you will get this event.
 compiler.hooks.done.tap('done', async stats => {
-  console.log("done compiling", stats.toString());
-  isFirstCompile = false;
+  const statsJson = stats.toJson({
+    all: false,
+    warnings: true,
+    errors: true,
+  });
+
+  const isSuccessful = !statsJson.errors.length && !statsJson.warnings.length;
+  if (isSuccessful && isFirstCompile) {
+    printNewLine();
+    console.log(dedent`
+      You can now view ${chalk.bold(appName)} in the browser
+
+        ${chalk.bold('Local:')} ${chalk.blue(protocol + '://localhost:' + port)}
+    `);
+
+    isFirstCompile = false;
+  }
 });
 
 const serverConfig = createDevServerConfig();
@@ -61,6 +81,7 @@ devServer.listen(port, HOST, err => {
   }
 
   console.log('Starting the development server...\n');
+  // TODO open browser at localhost with 'open' package
 });
 
 ['SIGINT', 'SIGTERM'].forEach(function(sig) {

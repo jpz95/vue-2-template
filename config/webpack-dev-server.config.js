@@ -30,10 +30,9 @@ module.exports = function(proxy, allowedHost) {
       !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true',
     // Enable gzip compression of generated files.
     compress: true,
-    // TODO handle error messages ourselves
     // Silence WebpackDevServer's own logs since they're generally not useful.
     // It will still show compile warnings and errors with this setting.
-    // clientLogLevel: 'none',
+    clientLogLevel: 'none',
     // By default WebpackDevServer serves physical files from current directory
     // in addition to all the virtual build products that it serves from memory.
     // This is confusing because those files won’t automatically be available in
@@ -57,7 +56,6 @@ module.exports = function(proxy, allowedHost) {
     // in the Webpack development configuration. Note that only changes
     // to CSS are currently hot reloaded. JS changes will refresh the browser.
     hot: true,
-
     // It is important to tell WebpackDevServer to use the same "root" path
     // as we specified in the config. In development, we always serve from /.
     publicPath: '/',
@@ -67,8 +65,8 @@ module.exports = function(proxy, allowedHost) {
     sockHost,
     sockPath,
     sockPort,
-    // WebpackDevServer is noisy by default so we emit custom message instead
-    // by listening to the compiler events with `compiler.hooks[...].tap` calls above.
+    // WebpackDevServer is noisy by default so we use 'friendly-errors-webpack-plugin'
+    // to handle our errors/warnings.
     quiet: true,
     overlay: false,
     // Reportedly, this avoids CPU overload on some systems.
@@ -83,7 +81,6 @@ module.exports = function(proxy, allowedHost) {
         'g'
       )
     },
-    overlay: true,
     historyApiFallback: {
       // Paths with dots should still use the history fallback.
       // See https://github.com/facebook/create-react-app/issues/387.
@@ -100,6 +97,5 @@ module.exports = function(proxy, allowedHost) {
         require(paths.proxySetup)(app);
       }
     },
-    stats: 'verbose'
   };
 };

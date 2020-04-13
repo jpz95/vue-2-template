@@ -3,6 +3,7 @@ const modules = require('./modules');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const webpack = require('webpack');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -297,22 +298,22 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
-                {
-                  loader: 'postcss-loader',
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009',
-                        },
-                        stage: 3,
-                      }),
-                    ],
-                    sourceMap: isEnvProduction && shouldUseSourceMap,
-                  },
-                },
+                // {
+                //   loader: 'postcss-loader',
+                //   options: {
+                //     ident: 'postcss',
+                //     plugins: () => [
+                //       require('postcss-flexbugs-fixes'),
+                //       require('postcss-preset-env')({
+                //         autoprefixer: {
+                //           flexbox: 'no-2009',
+                //         },
+                //         stage: 3,
+                //       }),
+                //     ],
+                //     sourceMap: isEnvProduction && shouldUseSourceMap,
+                //   },
+                // },
               ].filter(Boolean),
             },
             {
@@ -334,22 +335,22 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
-                {
-                  loader: 'postcss-loader',
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009',
-                        },
-                        stage: 3,
-                      }),
-                    ],
-                    sourceMap: isEnvProduction && shouldUseSourceMap,
-                  },
-                },
+                // {
+                //   loader: 'postcss-loader',
+                //   options: {
+                //     ident: 'postcss',
+                //     plugins: () => [
+                //       require('postcss-flexbugs-fixes'),
+                //       require('postcss-preset-env')({
+                //         autoprefixer: {
+                //           flexbox: 'no-2009',
+                //         },
+                //         stage: 3,
+                //       }),
+                //     ],
+                //     sourceMap: isEnvProduction && shouldUseSourceMap,
+                //   },
+                // },
               ].filter(Boolean),
             },
           ],
@@ -392,6 +393,7 @@ module.exports = function(webpackEnv) {
       new webpack.ProgressPlugin(),
       // This is necessary to emit hot updates (currently CSS only):
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+      new FriendlyErrorsWebpackPlugin(),
       isEnvProduction &&
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
@@ -443,6 +445,10 @@ module.exports = function(webpackEnv) {
       net: 'empty',
       tls: 'empty',
       child_process: 'empty',
-    }
+    },
+    // Turn off performance processing because we utilize
+    // our own hints via the FileSizeReporter
+    performance: false,
+    // stats: 'none',
   }
 }
