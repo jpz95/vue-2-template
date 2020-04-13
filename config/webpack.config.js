@@ -336,22 +336,22 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
-                // {
-                //   loader: 'postcss-loader',
-                //   options: {
-                //     ident: 'postcss',
-                //     plugins: () => [
-                //       require('postcss-flexbugs-fixes'),
-                //       require('postcss-preset-env')({
-                //         autoprefixer: {
-                //           flexbox: 'no-2009',
-                //         },
-                //         stage: 3,
-                //       }),
-                //     ],
-                //     sourceMap: isEnvProduction && shouldUseSourceMap,
-                //   },
-                // },
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009',
+                        },
+                        stage: 3,
+                      }),
+                    ],
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
+                  },
+                },
               ].filter(Boolean),
             },
             {
@@ -373,24 +373,22 @@ module.exports = function(webpackEnv) {
                     sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
                 },
-                // TODO figure out why loader complains about missing source map
-                // when loading styles from vue files.
-                // {
-                //   loader: 'postcss-loader',
-                //   options: {
-                //     ident: 'postcss',
-                //     plugins: () => [
-                //       require('postcss-flexbugs-fixes'),
-                //       require('postcss-preset-env')({
-                //         autoprefixer: {
-                //           flexbox: 'no-2009',
-                //         },
-                //         stage: 3,
-                //       }),
-                //     ],
-                //     sourceMap: isEnvProduction && shouldUseSourceMap,
-                //   },
-                // },
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009',
+                        },
+                        stage: 3,
+                      }),
+                    ],
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
+                  },
+                },
               ].filter(Boolean),
             },
           ],
