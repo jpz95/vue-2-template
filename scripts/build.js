@@ -30,12 +30,10 @@ copyPublicFolder();
 
 // feed config into webpack
 build().then((result) => {
-  console.log(`${chalk.green('Build compiled successfully.')}`);
   console.log(
     `Deployable bundle available at
     ${chalk.blue(paths.appBuild)}`
   );
-  console.log("we did it!", result.stats);
 
 }).catch((err) => {
   const message = err && err.message;
