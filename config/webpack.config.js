@@ -7,6 +7,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
+const settings = require('./webpack.settings');
 const configurator = require('./builder/webpack-configurator');
 const webpackEnvModule = require('./builder/webpack-env-module');
 const modules = require('./utils/modules');
@@ -68,7 +69,7 @@ module.exports = function(webpackEnv) {
       // display a syntax error overlay.
       isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
       // Finally, this is your app's code:
-      paths.appIndexJs,
+      paths.appEntry,
       // We include the app code last so that if there is a runtime error during
       // initialization, it doesn't blow up the WebpackDevServer client, and
       // changing JS code would still trigger a refresh.
@@ -233,11 +234,6 @@ module.exports = function(webpackEnv) {
       alias: {
         // Use ES5 distribution of Vue.js
         vue$: "vue/dist/vue.esm.js",
-        // Allows for better profiling with ReactDevTools
-        // ...(isEnvProductionProfile && {
-        //   'react-dom$': 'react-dom/profiling',
-        //   'scheduler/tracing': 'scheduler/tracing-profiling',
-        // }),
         ...(modules.webpackAliases || {}),
       },
     },
