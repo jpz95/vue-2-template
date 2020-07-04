@@ -189,30 +189,7 @@ module.exports = function(webpackEnv) {
         // plugin defines 'vendors' chunk's name as undefined, filtering it out
         // when determining which chunks to insert as scripts into html.
         name: false,
-        cacheGroups: {
-          // Creates a named vendor chunk, if its greater than 15kb.
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name(module) {
-              // get the name. E.g. node_modules/packageName/not/this/part.js
-              // or node_modules/packageName
-              const packageName =
-                module
-                  .context
-                  .match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-
-              // npm package names are URL-safe, but some servers
-              // don't like @ symbols
-              return `npm.${packageName.replace('@', '')}`;
-            },
-          },
-          // Creates a generic vendors chunk (default group).
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
-            name: 'vendors',
-          },
-        },
+        cacheGroups: settings.chunkGroups,
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
