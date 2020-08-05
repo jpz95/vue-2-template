@@ -9,7 +9,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const settings = require('./webpack.settings');
 const webpackEnvModule = require('./builder/webpack-env-module');
-const webpackModuleConfig = require('./config/webpack-module-config');
+const webpackModuleConfig = require('./config/module/webpack-module.config');
 const modules = require('./utils/modules');
 const paths = require('./utils/paths');
 const getClientEnvironment = require('./utils/env');
