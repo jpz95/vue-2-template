@@ -8,8 +8,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const settings = require('./webpack.settings');
-const configurator = require('./builder/webpack-configurator');
 const webpackEnvModule = require('./builder/webpack-env-module');
+const webpackModuleConfig = require('./config/webpack-module-config');
 const modules = require('./utils/modules');
 const paths = require('./utils/paths');
 const getClientEnvironment = require('./utils/env');
@@ -18,10 +18,6 @@ const appPackageJson = require(paths.appPackageJson);
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-
-const imageInlineSizeLimit = parseInt(
-  process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
-);
 
 module.exports = function(webpackEnv) {
   webpackEnvModule.setEnv(webpackEnv);
@@ -215,51 +211,7 @@ module.exports = function(webpackEnv) {
       },
     },
     module: {
-      strictExportPresence: true,
-      rules: [
-        // { eslint }
-        configurator.configureVueLoader(),
-        {
-          // "oneOf" will travers all of the following loaders until one will match
-          // the requirements. When no loader matches, it will fall back to the
-          // "file" loader at the end of the loader list.
-          oneOf: [
-            configurator.configureImageLoader(imageInlineSizeLimit),
-            configurator.configureMediaLoader(imageInlineSizeLimit),
-            configurator.configureFontLoader(imageInlineSizeLimit),
-            configurator.configureBabelLoader(),
-            {
-              test: /\.css$/,
-              oneOf: [
-                {
-                  resourceQuery: /module/,
-                  ...configurator.configureStyleLoader({
-                    type: 'cssModules',
-                    cssLoaderOptions: {
-                      importLoaders: 1,
-                      // enable CSS Modules
-                      modules: {
-                        localIdentName: isEnvProduction
-                          ? '[hash:base64]'
-                          : '[path][name]__[local]',
-                      },
-                      sourceMap: isEnvProduction && shouldUseSourceMap,
-                    },
-                  }),
-                },
-                configurator.configureStyleLoader({
-                  type: 'css',
-                  cssLoaderOptions: {
-                    importLoaders: 1,
-                    sourceMap: isEnvProduction && shouldUseSourceMap,
-                  },
-                }),
-              ],
-            },
-            configurator.configureFallbackLoader(),
-          ],
-        },
-      ],
+      ...webpackModuleConfig(),
     },
     plugins: [
       new VueLoaderPlugin(),

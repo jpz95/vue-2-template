@@ -22,19 +22,17 @@ const styleTypes = {
 
 // common function to get style loaders
 const getStyleLoaders = ({ cssLoaderOptions, preprocessors }) => {
-  const {
-    isEnvDevelopment,
-    isEnvProduction,
-    shouldUseSourceMap,
-    shouldUseRelativeAssetPaths,
-  } = webpackEnvModule;
+  const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
+  const isEnvProduction = webpackEnvModule.isEnvProduction();
+  const shouldUseSourceMap = webpackEnvModule.shouldUseSourceMap();
+  const shouldUseRelativeAssetPaths = webpackEnvModule.shouldUseRelativeAssetPaths();
 
   // Defines 'use' property for style loaders.
   const loaders = [
-    isEnvDevelopment() && require.resolve('vue-style-loader'),
-    isEnvProduction() && {
+    isEnvDevelopment && require.resolve('vue-style-loader'),
+    isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
-      options: shouldUseRelativeAssetPaths()
+      options: shouldUseRelativeAssetPaths
         ? { publicPath: '../../' }
         : {},
     },
@@ -60,7 +58,7 @@ const getStyleLoaders = ({ cssLoaderOptions, preprocessors }) => {
             stage: 3,
           }),
         ],
-        sourceMap: isEnvProduction() && shouldUseSourceMap(),
+        sourceMap: isEnvProduction && shouldUseSourceMap,
       },
     },
   ].filter(Boolean);
