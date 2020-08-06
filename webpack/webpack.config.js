@@ -3,12 +3,10 @@ const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-const settings = require('./webpack.settings');
 const webpackEnvModule = require('./builder/webpack-env-module');
+const webpackOptimizationConfig = require('./config/optimization/webpack-optimization.config');
 const webpackModuleConfig = require('./config/module/webpack-module.config');
 const modules = require('./utils/modules');
 const paths = require('./utils/paths');
@@ -25,11 +23,6 @@ module.exports = function(webpackEnv) {
   // TODO destruct webpackEnvModule instead, after converting all webpack options.
   const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
   const isEnvProduction = webpackEnvModule.isEnvProduction();
-
-  // Variable used for enabling profiling in Production
-  // passed into alias object. Uses a flag if passed into the build command
-  const isEnvProductionProfile =
-    isEnvProduction && process.argv.includes('--profile');
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -107,92 +100,7 @@ module.exports = function(webpackEnv) {
       globalObject: 'this',
     },
     optimization: {
-      minimize: isEnvProduction,
-      minimizer: [
-        // This is only used in production mode
-        new TerserPlugin({
-          terserOptions: {
-            parse: {
-              // We want terser to parse ecma 8 code. However, we don't want it
-              // to apply any minification steps that turns valid ecma 5 code
-              // into invalid ecma 5 code. This is why the 'compress' and 'output'
-              // sections only apply transformations that are ecma 5 safe
-              // https://github.com/facebook/create-react-app/pull/4234
-              ecma: 8,
-            },
-            compress: {
-              ecma: 5,
-              warnings: false,
-              // Disabled because of an issue with Uglify breaking seemingly valid code:
-              // https://github.com/facebook/create-react-app/issues/2376
-              // Pending further investigation:
-              // https://github.com/mishoo/UglifyJS2/issues/2011
-              comparisons: false,
-              // Disabled because of an issue with Terser breaking valid code:
-              // https://github.com/facebook/create-react-app/issues/5250
-              // Pending further investigation:
-              // https://github.com/terser-js/terser/issues/120
-              inline: 2,
-            },
-            mangle: {
-              safari10: true,
-            },
-            // Added for profiling in devtools
-            keep_classnames: isEnvProductionProfile,
-            keep_fnames: isEnvProductionProfile,
-            output: {
-              ecma: 5,
-              comments: false,
-              // Turned on because emoji and regex is not minified properly using default
-              // https://github.com/facebook/create-react-app/issues/2488
-              ascii_only: true,
-            },
-          },
-          // Use multi-process parallel running to improve the build speed
-          // Default number of concurrent runs: os.cpus().length - 1
-          parallel: true,
-          // Enable file caching
-          cache: true,
-          sourceMap: shouldUseSourceMap,
-        }),
-        // This is only used in production mode
-        new OptimizeCSSAssetsPlugin({
-          cssProcessorOptions: {
-            // parser: safePostCssParser,
-            map: shouldUseSourceMap
-              ? {
-                  // `inline: false` forces the sourcemap to be output into a
-                  // separate file
-                  inline: false,
-                  // `annotation: true` appends the sourceMappingURL to the end of
-                  // the css file, helping the browser find the sourcemap
-                  annotation: true,
-                }
-              : false,
-          },
-          cssProcessorPluginOptions: {
-            preset: ['default', { minifyFontValues: { removeQuotes: false } }],
-          },
-        }),
-      ],
-      splitChunks: {
-        chunks: 'all',
-        maxInitialRequests: Infinity,
-        // Splits chunks if it exceeds this threshold.
-        minSize: 15000, // 15 kb
-        automaticNameDelimiter: '-',
-        // TODO report bug for html-webpack-plugin.
-        // plugin defines 'vendors' chunk's name as undefined, filtering it out
-        // when determining which chunks to insert as scripts into html.
-        name: false,
-        cacheGroups: settings.chunkGroups,
-      },
-      // Keep the runtime chunk separated to enable long term caching
-      // https://twitter.com/wSokra/status/969679223278505985
-      // https://github.com/facebook/create-react-app/issues/5358
-      runtimeChunk: {
-        name: entrypoint => `runtime-${entrypoint.name}`,
-      },
+      ...webpackOptimizationConfig(),
     },
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
