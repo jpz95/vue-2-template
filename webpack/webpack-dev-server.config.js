@@ -48,6 +48,7 @@ module.exports = function(proxy, allowedHost) {
     // for some reason broken when imported through Webpack. If you just want to
     // use an image, put it in `src` and `import` it from JavaScript instead.
     contentBase: paths.appPublic,
+    contentBasePublicPath: paths.publicUrlOrPath,
     // By default files from `contentBase` will not trigger a page reload.
     watchContentBase: true,
     // Enable hot reloading server. It will provide WDS_SOCKET_PATH endpoint
@@ -56,9 +57,11 @@ module.exports = function(proxy, allowedHost) {
     // in the Webpack development configuration. Note that only changes
     // to CSS are currently hot reloaded. JS changes will refresh the browser.
     hot: true,
-    // It is important to tell WebpackDevServer to use the same "root" path
-    // as we specified in the config. In development, we always serve from /.
-    publicPath: '/',
+    // It is important to tell WebpackDevServer to use the same "publicPath" path as
+    // we specified in the Webpack config. When homepage is '.', default to serving
+    // from the root.
+    // remove last slash so user can land on `/test` instead of `/test/`
+    publicPath: paths.publicUrlOrPath.slice(0, -1),
     // Enable custom sockjs pathname for websocket connection to hot reloading server.
     // Enable custom sockjs hostname, pathname and port for websocket connection
     // to hot reloading server.
@@ -85,6 +88,7 @@ module.exports = function(proxy, allowedHost) {
       // Paths with dots should still use the history fallback.
       // See https://github.com/facebook/create-react-app/issues/387.
       disableDotRule: true,
+      index: paths.publicUrlOrPath,
     },
     // Enable HTTPS if the HTTPS environment variable is set to 'true'
     https: getHttpsConfig(),
@@ -92,6 +96,8 @@ module.exports = function(proxy, allowedHost) {
     public: allowedHost,
     proxy,
     before(app, server) {
+      // TODO redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
+
       if (fs.existsSync(paths.proxySetup)) {
         // This registers user provided middleware for proxy reasons
         require(paths.proxySetup)(app);

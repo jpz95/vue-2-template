@@ -24,20 +24,12 @@ module.exports = function(webpackEnv) {
   const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
   const isEnvProduction = webpackEnvModule.isEnvProduction();
 
-  // Webpack uses `publicPath` to determine where the app is being served from.
-  // It requires a trailing slash, or the file assets will get an incorrect path.
-  // In development, we always serve from the root. This makes config easier.
-  const publicPath = webpackEnvModule.getPublicPath();
-
-  // `publicUrl` is just like `publicPath`, but we will provide it to our app
+  // We will provide `paths.publicUrlOrPath` to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-  const publicUrl = isEnvProduction
-    ? publicPath.slice(0, -1)
-    : isEnvDevelopment && '';
 
   // Get environment variables to inject into our app.
-  const env = getClientEnvironment(publicUrl);
+  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -79,11 +71,11 @@ module.exports = function(webpackEnv) {
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
+
       // Webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      // We use "/" in development.
-      publicPath: publicPath,
+      publicPath: paths.publicUrlOrPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
@@ -173,7 +165,7 @@ module.exports = function(webpackEnv) {
       // TODO uncomment if we can use plugin
       // new ManifestPlugin({
       //   fileName: 'asset-manifest.json',
-      //   publicPath: publicPath,
+      //   publicPath: paths.publicUrlOrPath,
       //   generate: (seed, files, entrypoints) => {
       //     const manifestFiles = files.reduce((manifest, file) => {
       //       manifest[file.name] = file.path;

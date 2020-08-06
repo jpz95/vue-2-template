@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const paths = require('../../utils/paths');
 const webpackEnvModule = require('../../builder/webpack-env-module');
 
 const styleTypes = {
@@ -24,14 +25,15 @@ const getStyleLoaders = ({ cssLoaderOptions, preprocessors }) => {
   const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
   const isEnvProduction = webpackEnvModule.isEnvProduction();
   const shouldUseSourceMap = webpackEnvModule.shouldUseSourceMap();
-  const shouldUseRelativeAssetPaths = webpackEnvModule.shouldUseRelativeAssetPaths();
 
   // Defines 'use' property for style loaders.
   const loaders = [
     isEnvDevelopment && require.resolve('vue-style-loader'),
     isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
-      options: shouldUseRelativeAssetPaths
+      // css is located in `static/css`, use '../../' to locate index.html folder
+      // in production `paths.publicUrlOrPath` can be a relative path
+      options: paths.publicUrlOrPath.startsWith('.')
         ? { publicPath: '../../' }
         : {},
     },
