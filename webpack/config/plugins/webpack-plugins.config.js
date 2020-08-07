@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const paths = require('../../utils/paths');
-const getClientEnvironment = require('../../utils/env');
+const getClientEnvironment = require('../../utils/load-env');
 const webpackEnvModule = require('../../builder/webpack-env-module');
 
 module.exports = () => {

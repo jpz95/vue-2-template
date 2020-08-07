@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const getPublicUrlOrPath = require('./getPublicOrPath');
+const getPublicUrlOrPath = require('./get-public-or-path');
 const settings = require('../webpack.settings');
 
 // Make sure any symlinks in the project folder are resolved:

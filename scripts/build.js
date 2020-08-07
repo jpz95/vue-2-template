@@ -10,7 +10,7 @@ process.on('unhandledRejection', err => {
 });
 
 // Ensure environment variables are read.
-require('../webpack/utils/env');
+require('../webpack/utils/load-env');
 
 
 const chalk = require('chalk');

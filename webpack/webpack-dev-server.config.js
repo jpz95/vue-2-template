@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const paths = require('./utils/paths');
-const getHttpsConfig = require('./utils/getHttpsConfig');
+const getHttpsConfig = require('./utils/get-https-config');
 
 const host = process.env.HOST || '0.0.0.0';
 const sockHost = process.env.WDS_SOCKET_HOST;
