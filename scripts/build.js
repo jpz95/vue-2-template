@@ -9,6 +9,8 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
+console.log(`Starting up the ${process.env.NODE_ENV} build...\n`);
+
 // Ensure environment variables are read.
 require('../webpack/utils/load-env');
 
@@ -49,7 +51,7 @@ build().then((result) => {
 });
 
 function build() {
-  console.log('Creating an optimized production build...');
+  console.log(`Bundling the project...`);
   printNewLine(1);
 
   const compiler = webpack(config);

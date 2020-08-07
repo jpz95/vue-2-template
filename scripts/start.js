@@ -9,6 +9,8 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
+console.log(`Starting up the ${process.env.NODE_ENV} build...\n`);
+
 // Ensure environment variables are read.
 require('../webpack/utils/load-env');
 
@@ -62,7 +64,7 @@ compiler.hooks.done.tap('done', async stats => {
 
   const isSuccessful = !statsJson.errors.length && !statsJson.warnings.length;
   if (isSuccessful && isFirstCompile) {
-    printNewLine();
+    printNewLine(1);
     console.log(dedent`
       You can now view ${chalk.bold(appName)} in the browser
 
@@ -80,7 +82,10 @@ devServer.listen(port, host, err => {
     return console.log(err);
   }
 
-  console.log('Starting the development server...\n');
+  printNewLine(1);
+  console.log('Starting the development server...');
+  printNewLine(1);
+
   // TODO open browser at localhost with 'open' package
 });
 
