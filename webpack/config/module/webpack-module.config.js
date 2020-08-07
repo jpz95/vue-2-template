@@ -1,13 +1,7 @@
 const loaders = require('./_loaders');
-const webpackEnvModule = require('../../builder/webpack-env-module');
 
-const imageInlineSizeLimit = parseInt(
-  process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
-);
-
-module.exports = () => {
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  const shouldUseSourceMap = webpackEnvModule.shouldUseSourceMap();
+module.exports = (envState) => {
+  const { isEnvProduction, shouldUseSourceMap, imageInlineSizeLimit } = envState;
 
   return {
     strictExportPresence: true,
@@ -40,6 +34,7 @@ module.exports = () => {
                     },
                     sourceMap: isEnvProduction && shouldUseSourceMap,
                   },
+                  ...envState,
                 }),
               },
               loaders.configureStyleLoader({
@@ -48,6 +43,7 @@ module.exports = () => {
                   importLoaders: 1,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
+                ...envState,
               }),
             ],
           },

@@ -1,12 +1,10 @@
 const path = require('path');
 
-const webpackEnvModule = require('../../builder/webpack-env-module');
 const paths = require('../../utils/paths');
 const appPackageJson = require(paths.appPackageJson);
 
-module.exports = () => {
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
+module.exports = (envState) => {
+  const { isEnvDevelopment, isEnvProduction } = envState;
 
   return {
     // The build folder.

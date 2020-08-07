@@ -5,19 +5,17 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const paths = require('../../utils/paths');
-const getClientEnvironment = require('../../utils/load-env');
-const webpackEnvModule = require('../../builder/webpack-env-module');
+const getEnvironmentVariables = require('../../utils/load-env');
 
-module.exports = () => {
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
+module.exports = (envState) => {
+  const { isEnvDevelopment, isEnvProduction } = envState;
 
   // We will provide `paths.publicUrlOrPath` to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
 
   // Get environment variables to inject into our app.
-  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
+  const envVariables = getEnvironmentVariables(paths.publicUrlOrPath.slice(0, -1));
 
   return [
     new VueLoaderPlugin(),
@@ -49,11 +47,11 @@ module.exports = () => {
     ),
 
     // Makes some environment variables available to the JS code, for example:
-    // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
+    // if (process.env.NODE_ENV === 'production') { ... }. See `./load-env.js`.
     // It is absolutely essential that NODE_ENV is set to production
     // during a production build.
     // Otherwise React will be compiled in the very slow development mode.
-    new webpack.DefinePlugin(env.stringified),
+    new webpack.DefinePlugin(envVariables.stringified),
 
     // This is necessary to emit hot updates (currently CSS only):
     isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),

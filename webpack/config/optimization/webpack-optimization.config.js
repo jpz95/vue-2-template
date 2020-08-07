@@ -2,27 +2,21 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const minimizers = require('./_minimizers');
-const webpackEnvModule = require('../../builder/webpack-env-module');
 const settings = require('../../webpack.settings');
 
-module.exports = () => {
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  // TODO should be passed from webpack.config.js
-  const env = {
-    shouldUseSourceMap: webpackEnvModule.shouldUseSourceMap(),
-    isEnvProductionProfile: webpackEnvModule.isEnvProductionProfile(),
-  };
+module.exports = (envState) => {
+  const { isEnvProduction } = envState;
 
   return {
     minimize: isEnvProduction,
     minimizer: [
       // This is only used in production mode
       new TerserPlugin(
-        minimizers.configureTerserPlugin(env),
+        minimizers.configureTerserPlugin(envState),
       ),
       // This is only used in production mode
       new OptimizeCSSAssetsPlugin(
-        minimizers.configureOptimizeCSSAssetsPlugin(env),
+        minimizers.configureOptimizeCSSAssetsPlugin(envState),
       ),
     ],
 

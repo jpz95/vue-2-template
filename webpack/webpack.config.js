@@ -1,18 +1,14 @@
-const webpackEnvModule = require('./builder/webpack-env-module');
 const webpackOutputConfig = require('./config/output/webpack-output.config');
 const webpackOptimizationConfig = require('./config/optimization/webpack-optimization.config');
 const webpackModuleConfig = require('./config/module/webpack-module.config');
 const webpackPluginsConfig = require('./config/plugins/webpack-plugins.config');
 const webpackResolveConfig = require('./config/resolve/webpack-resolve.config');
+const getEnvState = require('./utils/get-env-state');
 const paths = require('./utils/paths');
 
 module.exports = function(webpackEnv) {
-  webpackEnvModule.setEnv(webpackEnv);
-
-  // TODO destruct webpackEnvModule instead, after converting all webpack options.
-  const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  const shouldUseSourceMap = webpackEnvModule.shouldUseSourceMap();
+  const envState = getEnvState(webpackEnv);
+  const { isEnvDevelopment, isEnvProduction, shouldUseSourceMap } = envState;
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -39,21 +35,23 @@ module.exports = function(webpackEnv) {
       // initialization, it doesn't blow up the WebpackDevServer client, and
       // changing JS code would still trigger a refresh.
     ].filter(Boolean),
+
     output: {
-      ...webpackOutputConfig(),
+      ...webpackOutputConfig(envState),
     },
     optimization: {
-      ...webpackOptimizationConfig(),
+      ...webpackOptimizationConfig(envState),
     },
     resolve: {
-      ...webpackResolveConfig(),
+      ...webpackResolveConfig(envState),
     },
     module: {
-      ...webpackModuleConfig(),
+      ...webpackModuleConfig(envState),
     },
     plugins: [
-      ...webpackPluginsConfig(),
+      ...webpackPluginsConfig(envState),
     ].filter(Boolean),
+
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.
     node: {
@@ -67,9 +65,9 @@ module.exports = function(webpackEnv) {
       tls: 'empty',
       child_process: 'empty',
     },
+
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,
-    // stats: 'none',
-  }
-}
+  };
+};

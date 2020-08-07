@@ -1,7 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const paths = require('../../utils/paths');
-const webpackEnvModule = require('../../builder/webpack-env-module');
 
 const styleTypes = {
   css: {
@@ -21,11 +20,13 @@ const styleTypes = {
 };
 
 // common function to get style loaders
-const getStyleLoaders = ({ cssLoaderOptions, preprocessors }) => {
-  const isEnvDevelopment = webpackEnvModule.isEnvDevelopment();
-  const isEnvProduction = webpackEnvModule.isEnvProduction();
-  const shouldUseSourceMap = webpackEnvModule.shouldUseSourceMap();
-
+const getStyleLoaders = ({
+  cssLoaderOptions,
+  preprocessors,
+  isEnvDevelopment,
+  isEnvProduction,
+  shouldUseSourceMap,
+}) => {
   // Defines 'use' property for style loaders.
   const loaders = [
     isEnvDevelopment && require.resolve('vue-style-loader'),
