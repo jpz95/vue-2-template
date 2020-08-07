@@ -3,6 +3,9 @@
     <h1 :class="$style.blue">
       Hello World
     </h1>
+    <h2>
+      {{ $style.blue }}
+    </h2>
   </div>
 </template>
 
@@ -21,5 +24,11 @@ export default {
 
 h2 {
   color: red;
+}
+</style>
+
+<style scoped>
+.app {
+  color: green;
 }
 </style>
