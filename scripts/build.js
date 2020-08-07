@@ -101,7 +101,7 @@ function build() {
       });
     });
   });
-}
+};
 
 
 function copyPublicFolder() {
@@ -109,4 +109,4 @@ function copyPublicFolder() {
     dereference: true,
     filter: file => file !== paths.appHtml,
   });
-}
+};

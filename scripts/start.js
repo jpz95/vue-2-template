@@ -15,20 +15,20 @@ require('../webpack/utils/load-env');
 
 const chalk = require('chalk');
 const dedent = require('dedent');
-const fs = require('fs');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+
 const paths = require('../webpack/utils/paths');
 const configFactory = require('../webpack/webpack.config');
 const createDevServerConfig = require('../webpack/webpack-dev-server.config');
 const printNewLine = require('../webpack/utils/print-new-line');
 
 const config = configFactory('development');
-const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
+const protocol = process.env.DEV_SERVER_HTTPS === 'true' ? 'https' : 'http';
 const appName = require(paths.appPackageJson).name;
 
-const HOST = process.env.HOST || '0.0.0.0';
-const port = 4000;
+const host = process.env.DEV_SERVER_HOST || '0.0.0.0';
+const port = process.env.DEV_SERVER_PORT || 4000;
 
 let compiler;
 try {
@@ -75,7 +75,7 @@ compiler.hooks.done.tap('done', async stats => {
 
 const serverConfig = createDevServerConfig();
 const devServer = new WebpackDevServer(compiler, serverConfig);
-devServer.listen(port, HOST, err => {
+devServer.listen(port, host, err => {
   if (err) {
     return console.log(err);
   }
