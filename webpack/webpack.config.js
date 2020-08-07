@@ -3,7 +3,7 @@ const webpackOutputConfig = require('./config/output/webpack-output.config');
 const webpackOptimizationConfig = require('./config/optimization/webpack-optimization.config');
 const webpackModuleConfig = require('./config/module/webpack-module.config');
 const webpackPluginsConfig = require('./config/plugins/webpack-plugins.config');
-const modules = require('./utils/modules');
+const webpackResolveConfig = require('./config/resolve/webpack-resolve.config');
 const paths = require('./utils/paths');
 
 module.exports = function(webpackEnv) {
@@ -46,20 +46,7 @@ module.exports = function(webpackEnv) {
       ...webpackOptimizationConfig(),
     },
     resolve: {
-      // This allows you to set a fallback for where Webpack should look for modules.
-      // We placed these paths second because we want `node_modules` to "win"
-      // if there are any conflicts. This matches Node resolution mechanism.
-      // https://github.com/facebook/create-react-app/issues/253
-      modules: ['node_modules', paths.appNodeModules].concat(
-        modules.additionalModulePaths || []
-      ),
-      // These are the reasonable defaults supported by the Node ecosystem.
-      extensions: paths.moduleFileExtensions.map(ext => `.${ext}`),
-      alias: {
-        // Use ES5 distribution of Vue.js
-        vue$: "vue/dist/vue.esm.js",
-        ...(modules.webpackAliases || {}),
-      },
+      ...webpackResolveConfig(),
     },
     module: {
       ...webpackModuleConfig(),
