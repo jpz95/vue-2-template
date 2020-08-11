@@ -32,3 +32,16 @@ h2 {
   color: green;
 }
 </style>
+
+<style lang="scss">
+h1 {
+  text-transform: uppercase;
+  margin: 0;
+}
+</style>
+
+<style lang="scss" module="b">
+h1 {
+  font-size: $base-font-size / 4;
+}
+</style>

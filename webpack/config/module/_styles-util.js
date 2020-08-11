@@ -16,7 +16,18 @@ const styleTypes = {
     test: /\.css$/,
   },
   // TODO define SCSS options
-  scss: true,
+  scss: {
+    test: /\.scss$/,
+    exclude: /\.module\.scss$/,
+    // Don't consider CSS imports dead code even if the
+    // containing package claims to have no side effects.
+    // Remove this when webpack adds a warning or an error for this.
+    // See https://github.com/webpack/webpack/issues/6571
+    sideEffects: true,
+  },
+  scssModules: {
+    test: /\.scss$/,
+  },
 };
 
 // common function to get style loaders

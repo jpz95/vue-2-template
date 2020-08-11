@@ -47,6 +47,54 @@ module.exports = (envState) => {
               }),
             ],
           },
+          {
+            test: /\.scss$/,
+            oneOf: [
+              {
+                resourceQuery: /module/,
+                ...loaders.configureStyleLoader({
+                  type: 'scssModules',
+                  cssLoaderOptions: {
+                    importLoaders: 3,
+                    // enable CSS Modules
+                    modules: {
+                      localIdentName: isEnvProduction
+                        ? '[hash:base64]'
+                        : '[path][name]__[local]',
+                    },
+                    sourceMap: isEnvProduction && shouldUseSourceMap,
+                  },
+                  preprocessors: [
+                    {
+                      name: 'sass-loader',
+                      options: {
+                        // Prepends app variables to every SCSS file
+                        prependData: `@import "~_variables.scss";`
+                      },
+                    },
+                  ],
+                  ...envState,
+                }),
+              },
+              loaders.configureStyleLoader({
+                type: 'scss',
+                cssLoaderOptions: {
+                  importLoaders: 3,
+                  sourceMap: isEnvProduction && shouldUseSourceMap,
+                },
+                preprocessors: [
+                  {
+                    name: 'sass-loader',
+                    options: {
+                      // Prepends app variables to every SCSS file
+                      prependData: `@import "~_variables.scss";`
+                    },
+                  },
+                ],
+                ...envState,
+              }),
+            ],
+          },
           loaders.configureFallbackLoader(),
         ],
       },
