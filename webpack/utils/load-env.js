@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2015-2020, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * facebook.license file in the licenses directory of this source tree.
+ */
+
 const fs = require('fs');
 const path = require('path');
 const paths = require('./paths');
