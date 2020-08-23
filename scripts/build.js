@@ -13,6 +13,8 @@ console.log(`Starting up the ${process.env.NODE_ENV} build...\n`);
 
 // Ensure environment variables are read.
 require('../webpack/utils/load-env');
+// Ensure the custom webpack settings are read.
+require('../webpack/webpack.settings');
 
 
 const chalk = require('chalk');
