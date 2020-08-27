@@ -40,10 +40,9 @@ module.exports = (envState) => {
 
             // Get the name. E.g. node_modules/packageName/not/this/part.js
             //  or node_modules/packageName
-            const matches =
-              module
-                .nameForCondition()
-                .match(/[\\/]node_modules[\\/](.*?)([\\/|$])/) || [];
+            const matches = module
+              .nameForCondition()
+              .match(/[\\/]node_modules[\\/](.*?)([\\/|$])/) || [];
 
             const packageName = matches.length > 0 ? matches[1] : module.identifier();
 
@@ -61,7 +60,7 @@ module.exports = (envState) => {
         default: {
           minChunks: 2,
           priority: -20,
-          reuseExistingChunk: true
+          reuseExistingChunk: true,
         },
       },
     },
@@ -70,7 +69,7 @@ module.exports = (envState) => {
     // https://twitter.com/wSokra/status/969679223278505985
     // https://github.com/facebook/create-react-app/issues/5358
     runtimeChunk: {
-      name: entrypoint => `runtime-${entrypoint.name}`,
+      name: (entrypoint) => `runtime-${entrypoint.name}`,
     },
   };
 };

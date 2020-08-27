@@ -17,33 +17,29 @@ module.exports = (envState) => {
   // Get environment variables to inject into our app.
   const envVariables = getEnvironmentVariables(paths.publicUrlOrPath.slice(0, -1));
 
+  const minify = {
+    removeComments: true,
+    collapseWhitespace: true,
+    removeRedundantAttributes: true,
+    useShortDoctype: true,
+    removeEmptyAttributes: true,
+    removeStyleLinkTypeAttributes: true,
+    keepClosingSlash: true,
+    minifyJS: true,
+    minifyCSS: true,
+    minifyURLs: true,
+  };
+
   return [
     new VueLoaderPlugin(),
 
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin(
-      Object.assign(
-        {},
-        {
-          inject: true,
-          template: paths.appHtml,
-        },
-        isEnvProduction ? {
-            minify: {
-              removeComments: true,
-              collapseWhitespace: true,
-              removeRedundantAttributes: true,
-              useShortDoctype: true,
-              removeEmptyAttributes: true,
-              removeStyleLinkTypeAttributes: true,
-              keepClosingSlash: true,
-              minifyJS: true,
-              minifyCSS: true,
-              minifyURLs: true,
-            }
-          }
-        : undefined
-      )
+      {
+        inject: true,
+        template: paths.appHtml,
+        ...(isEnvProduction ? { minify } : undefined),
+      },
     ),
 
     // Makes some environment variables available to the JS code, for example:
@@ -58,8 +54,8 @@ module.exports = (envState) => {
 
     new FriendlyErrorsWebpackPlugin(),
 
-    isEnvProduction &&
-      new MiniCssExtractPlugin({
+    isEnvProduction
+      && new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
         filename: 'static/css/[name].[contenthash:8].css',

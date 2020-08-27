@@ -15,7 +15,7 @@ const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/sockjs-node'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
-module.exports = function(proxy, allowedHost) {
+module.exports = function webpackDevServerConfig(proxy, allowedHost) {
   return {
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
     // websites from potentially accessing local content through DNS rebinding:
@@ -86,10 +86,10 @@ module.exports = function(proxy, allowedHost) {
     watchOptions: {
       ignored: new RegExp(
         `^(?!${escape(
-          path.normalize(paths.appSrc + '/').replace(/[\\]+/g, '/')
+          path.normalize(`${paths.appSrc}/`).replace(/[\\]+/g, '/'),
         )}).+/node_modules/`,
-        'g'
-      )
+        'g',
+      ),
     },
     historyApiFallback: {
       // Paths with dots should still use the history fallback.
@@ -102,11 +102,12 @@ module.exports = function(proxy, allowedHost) {
     host,
     public: allowedHost,
     proxy,
-    before(app, server) {
+    before(app) {
       // TODO redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
 
       if (fs.existsSync(paths.proxySetup)) {
         // This registers user provided middleware for proxy reasons
+        // eslint-disable-next-line global-require, import/no-dynamic-require
         require(paths.proxySetup)(app);
       }
     },

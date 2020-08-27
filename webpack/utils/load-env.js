@@ -7,15 +7,19 @@
 
 const fs = require('fs');
 const path = require('path');
+
+const dotenv = require('dotenv');
+const dotenvExpand = require('dotenv-expand');
+
 const paths = require('./paths');
 
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
 
-const NODE_ENV = process.env.NODE_ENV;
+const { NODE_ENV } = process.env;
 if (!NODE_ENV) {
   throw new Error(
-    'The NODE_ENV environment variable is required but was not specified.'
+    'The NODE_ENV environment variable is required but was not specified.',
   );
 }
 
@@ -35,12 +39,12 @@ const dotenvFiles = [
 // that have already been set.  Variable expansion is supported in .env files.
 // https://github.com/motdotla/dotenv
 // https://github.com/motdotla/dotenv-expand
-dotenvFiles.forEach(dotenvFile => {
+dotenvFiles.forEach((dotenvFile) => {
   if (fs.existsSync(dotenvFile)) {
-    require('dotenv-expand')(
-      require('dotenv').config({
+    dotenvExpand(
+      dotenv.config({
         path: dotenvFile,
-      })
+      }),
     );
   }
 });
@@ -57,8 +61,8 @@ dotenvFiles.forEach(dotenvFile => {
 const appDirectory = fs.realpathSync(process.cwd());
 process.env.NODE_PATH = (process.env.NODE_PATH || '')
   .split(path.delimiter)
-  .filter(folder => folder && !path.isAbsolute(folder))
-  .map(folder => path.resolve(appDirectory, folder))
+  .filter((folder) => folder && !path.isAbsolute(folder))
+  .map((folder) => path.resolve(appDirectory, folder))
   .join(path.delimiter);
 
 // Grab NODE_ENV and APP_* environment variables and prepare them to be
@@ -67,9 +71,10 @@ const APP = /^APP_/i;
 
 function getEnvironmentVariables(publicUrl) {
   const raw = Object.keys(process.env)
-    .filter(key => APP.test(key))
+    .filter((key) => APP.test(key))
     .reduce(
       (env, key) => {
+        // eslint-disable-next-line no-param-reassign
         env[key] = process.env[key];
         return env;
       },
@@ -91,17 +96,18 @@ function getEnvironmentVariables(publicUrl) {
         WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
         WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
         GENERATE_SOURCEMAP: process.env.GENERATE_SOURCEMAP,
-      }
+      },
     );
   // Stringify all values so we can feed into Webpack DefinePlugin
   const stringified = {
     'process.env': Object.keys(raw).reduce((env, key) => {
+      // eslint-disable-next-line no-param-reassign
       env[key] = JSON.stringify(raw[key]);
       return env;
     }, {}),
   };
 
   return { raw, stringified };
-};
+}
 
 module.exports = getEnvironmentVariables;

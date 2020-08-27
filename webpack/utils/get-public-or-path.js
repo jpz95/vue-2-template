@@ -7,8 +7,6 @@
 
 const { URL } = require('url');
 
-module.exports = getPublicUrlOrPath;
-
 /**
  * Returns a URL or a path with slash at the end
  * In production can be URL, abolute path, relative path
@@ -25,39 +23,46 @@ function getPublicUrlOrPath({ isEnvDevelopment, homepage, publicUrl }) {
 
   if (publicUrl) {
     // ensure last slash exists
-    publicUrl = publicUrl.endsWith('/')
+    const sanitizedPublicUrl = publicUrl.endsWith('/')
       ? publicUrl
-      : publicUrl + '/';
+      : `${publicUrl}/`;
 
     // validate if `publicUrl` is a URL or path like
     // `stubDomain` is ignored if `publicUrl` contains a domain
-    const validPublicUrl = new URL(publicUrl, stubDomain);
+    const validPublicUrl = new URL(sanitizedPublicUrl, stubDomain);
 
-    return isEnvDevelopment
-      ? publicUrl.startsWith('.')
-        ? '/'
-        : validPublicUrl.pathname
-      : // Some apps do not use client-side routing with pushState.
-        // For these, "homepage" can be set to "." to enable relative asset paths.
-        publicUrl;
+    if (!isEnvDevelopment) {
+      // Some apps do not use client-side routing with pushState.
+      // For these, "homepage" can be set to "." to enable relative asset paths.
+      return sanitizedPublicUrl;
+    }
+
+    return sanitizedPublicUrl.startsWith('.')
+      ? '/'
+      : validPublicUrl.pathname;
   }
 
   if (homepage) {
     // strip last slash if exists
-    homepage = homepage.endsWith('/') ? homepage : homepage + '/';
+    const sanitizedHomepage = homepage.endsWith('/') ? homepage : `${homepage}/`;
 
     // validate if `homepage` is a URL or path like and use just pathname
-    const validHomepagePathname = new URL(homepage, stubDomain).pathname;
-    return isEnvDevelopment
-      ? homepage.startsWith('.')
-        ? '/'
-        : validHomepagePathname
-      : // Some apps do not use client-side routing with pushState.
+    const validHomepagePathname = new URL(sanitizedHomepage, stubDomain).pathname;
+
+    if (!isEnvDevelopment) {
+      // Some apps do not use client-side routing with pushState.
       // For these, "homepage" can be set to "." to enable relative asset paths.
-      homepage.startsWith('.')
-      ? homepage
+      return sanitizedHomepage.startsWith('.')
+        ? sanitizedHomepage
+        : validHomepagePathname;
+    }
+
+    return homepage.startsWith('.')
+      ? '/'
       : validHomepagePathname;
   }
 
   return '/';
-};
+}
+
+module.exports = getPublicUrlOrPath;

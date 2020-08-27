@@ -1,6 +1,8 @@
 const path = require('path');
 
 const paths = require('../../utils/paths');
+
+// eslint-disable-next-line import/no-dynamic-require
 const appPackageJson = require(paths.appPackageJson);
 
 module.exports = (envState) => {
@@ -32,12 +34,11 @@ module.exports = (envState) => {
 
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: isEnvProduction
-      ? info =>
-          path
-            .relative(paths.appSrc, info.absoluteResourcePath)
-            .replace(/\\/g, '/')
-      : isEnvDevelopment &&
-        (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+      ? (info) => path
+        .relative(paths.appSrc, info.absoluteResourcePath)
+        .replace(/\\/g, '/')
+      : isEnvDevelopment
+        && ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
 
     // Prevents conflicts when multiple Webpack runtimes (from different apps)
     // are used on the same page.

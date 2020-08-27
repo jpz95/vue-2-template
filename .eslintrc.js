@@ -14,6 +14,8 @@ module.exports = {
   ],
   rules: {
     quotes: ['error', 'single'],
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    radix: ['error', 'as-needed'],
   },
   settings: {
     'import/resolver': {
