@@ -3,17 +3,15 @@
     <h1 :class="$style.blue">
       Hello World
     </h1>
-    <h2>
-      {{ $style.blue }}
-    </h2>
+    <h2>{{ $style.blue }}</h2>
   </div>
 </template>
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   data: () => ({}),
-  methods: {}
+  methods: {},
 };
 </script>
 

@@ -3,14 +3,15 @@ import Vue from 'vue';
 // Import global styles
 import './app.css';
 
-import App from './app';
+import App from './app.vue';
 
-var main = new Vue({
-  render: h => h(App)
+new Vue({
+  render: (h) => h(App),
 }).$mount('#app');
 
 if (module.hot) {
   module.hot.accept('./app.vue', () => {
-    console.log("accept");
+    // eslint-disable-next-line no-console
+    console.log('accept');
   });
 }
