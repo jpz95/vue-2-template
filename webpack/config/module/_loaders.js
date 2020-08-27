@@ -2,6 +2,24 @@ const stylesUtil = require('./_styles-util');
 const paths = require('../../utils/paths');
 
 module.exports = {
+  configureEslintLoader() {
+    return {
+      test: /\.(js|mjs|vue)$/,
+      enforce: 'pre',
+      use: [
+        {
+          options: {
+            cache: true,
+            eslintPath: require.resolve('eslint'),
+            resolvePluginsRelativeTo: __dirname,
+          },
+          loader: require.resolve('eslint-loader'),
+        },
+      ],
+      include: paths.appSrc,
+    };
+  },
+
   configureBabelLoader() {
     // Process application JS with Babel.
     return {
@@ -34,7 +52,7 @@ module.exports = {
 
   configureStyleLoader(args) {
     if (!(args.type in stylesUtil.styleTypes)) {
-      throw new TypeError('No style loader configuration for type ' + args.type, args);
+      throw new TypeError(`No style loader configuration for type ${args.type}`, args);
     }
 
     const styleLoaderOptions = stylesUtil.styleTypes[args.type];
@@ -60,7 +78,7 @@ module.exports = {
       options: {
         name: 'static/media/[name].[hash:8].[ext]',
       },
-    }
+    };
   },
 
   // "url" loader works like "file" loader except that it embeds assets

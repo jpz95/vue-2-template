@@ -6,10 +6,12 @@ module.exports = (envState) => {
   return {
     strictExportPresence: true,
     rules: [
-      // { eslint }
+      // First, run the linter.
+      // It's important to do this before Babel processes the JS.
+      loaders.configureEslintLoader(),
       loaders.configureVueLoader(),
       {
-        // "oneOf" will travers all of the following loaders until one will match
+        // "oneOf" will traverse all of the following loaders until one will match
         // the requirements. When no loader matches, it will fall back to the
         // "file" loader at the end of the loader list.
         oneOf: [
@@ -69,7 +71,7 @@ module.exports = (envState) => {
                       name: 'sass-loader',
                       options: {
                         // Prepends app variables to every SCSS file
-                        prependData: `@import "~_variables.scss";`
+                        prependData: '@import "~_variables.scss";',
                       },
                     },
                   ],
@@ -87,7 +89,7 @@ module.exports = (envState) => {
                     name: 'sass-loader',
                     options: {
                       // Prepends app variables to every SCSS file
-                      prependData: `@import "~_variables.scss";`
+                      prependData: '@import "~_variables.scss";',
                     },
                   },
                 ],

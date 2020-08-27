@@ -13,7 +13,7 @@ const webpackResolveConfig = require('./config/resolve/webpack-resolve.config');
 const getEnvState = require('./utils/get-env-state');
 const paths = require('./utils/paths');
 
-module.exports = function(webpackEnv) {
+module.exports = function webpackConfig(webpackEnv) {
   const envState = getEnvState(webpackEnv);
   const { isEnvDevelopment, isEnvProduction, shouldUseSourceMap } = envState;
 
@@ -21,6 +21,7 @@ module.exports = function(webpackEnv) {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
+    // eslint-disable-next-line no-nested-ternary
     devtool: isEnvProduction
       ? shouldUseSourceMap
         ? 'source-map'
@@ -35,7 +36,7 @@ module.exports = function(webpackEnv) {
       // apply hot updates (in case of CSS changes), or refresh the page (in
       // case of JS changes). When you make a syntax error, this client will
       // display a syntax error overlay.
-      isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
+      isEnvDevelopment && `${require.resolve('webpack-dev-server/client')}?/`,
       // Finally, this is your app's code:
       paths.appEntry,
       // We include the app code last so that if there is a runtime error during
