@@ -8,7 +8,7 @@ const paths = require('../../utils/paths');
 const getEnvironmentVariables = require('../../utils/load-env');
 
 module.exports = (envState) => {
-  const { isEnvDevelopment, isEnvProduction } = envState;
+  const { isEnvDevelopment, isEnvTest, isEnvProduction } = envState;
 
   // We will provide `paths.publicUrlOrPath` to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
@@ -34,7 +34,7 @@ module.exports = (envState) => {
     new VueLoaderPlugin(),
 
     // Generates an `index.html` file with the <script> injected.
-    new HtmlWebpackPlugin(
+    !isEnvTest && new HtmlWebpackPlugin(
       {
         inject: true,
         template: paths.appHtml,
@@ -52,15 +52,15 @@ module.exports = (envState) => {
     // This is necessary to emit hot updates (currently CSS only):
     isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
 
-    new FriendlyErrorsWebpackPlugin(),
+    !isEnvTest && new FriendlyErrorsWebpackPlugin(),
 
     isEnvProduction
-      && new MiniCssExtractPlugin({
-        // Options similar to the same options in webpackOptions.output
-        // both options are optional
-        filename: 'static/css/[name].[contenthash:8].css',
-        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-      }),
+    && new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+    }),
 
     // Generate an asset manifest file with the following content:
     // - "files" key: Mapping of all asset filenames to their corresponding

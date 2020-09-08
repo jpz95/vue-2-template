@@ -7,6 +7,7 @@ const imageInlineSizeLimit = parseInt(
 
 module.exports = (webpackEnv) => {
   const isEnvDevelopment = webpackEnv === 'development';
+  const isEnvTest = webpackEnv === 'test';
   const isEnvProduction = webpackEnv === 'production';
   const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
 
@@ -14,6 +15,7 @@ module.exports = (webpackEnv) => {
     shouldUseSourceMap,
     imageInlineSizeLimit,
     isEnvDevelopment,
+    isEnvTest,
     isEnvProduction,
     isEnvProductionProfile,
   };

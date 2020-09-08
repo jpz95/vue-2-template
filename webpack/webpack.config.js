@@ -5,6 +5,8 @@
  * facebook.license file in the licenses directory of this source tree.
  */
 
+const nodeExternals = require('webpack-node-externals');
+
 const webpackOutputConfig = require('./config/output/webpack-output.config');
 const webpackOptimizationConfig = require('./config/optimization/webpack-optimization.config');
 const webpackModuleConfig = require('./config/module/webpack-module.config');
@@ -15,10 +17,15 @@ const paths = require('./utils/paths');
 
 module.exports = function webpackConfig(webpackEnv) {
   const envState = getEnvState(webpackEnv);
-  const { isEnvDevelopment, isEnvProduction, shouldUseSourceMap } = envState;
+  const {
+    isEnvDevelopment,
+    isEnvTest,
+    isEnvProduction,
+    shouldUseSourceMap,
+  } = envState;
 
   return {
-    mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
+    mode: isEnvProduction ? 'production' : 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
     // eslint-disable-next-line no-nested-ternary
@@ -26,7 +33,9 @@ module.exports = function webpackConfig(webpackEnv) {
       ? shouldUseSourceMap
         ? 'source-map'
         : false
-      : isEnvDevelopment && 'cheap-module-source-map',
+      : isEnvDevelopment
+        ? 'cheap-module-source-map'
+        : 'inline-cheap-module-source-map',
 
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
@@ -58,6 +67,10 @@ module.exports = function webpackConfig(webpackEnv) {
     },
     plugins: [
       ...webpackPluginsConfig(envState),
+    ].filter(Boolean),
+
+    externals: [
+      isEnvTest && nodeExternals(),
     ].filter(Boolean),
 
     // Some libraries import Node modules but don't use them in the browser.
