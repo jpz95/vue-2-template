@@ -8,9 +8,11 @@ Most features were implemented (up to v3.4.1), including:
 
 - **Optimizations for over 20 file types** - Takes advantage of webpack's bundle optimizations and the browser's file caching to increase your project's performance.
 
-- **Cutting-edge JavaScript** - Supports the latest JavaScript features, like ES6, spread operator, and dynamic imports.
+- **Cutting-edge JavaScript** - Supports the latest JavaScript features like arrow functions, the spread operator, and dynamic imports.
 
 - **Autoprefixed CSS** - Uses PostCSS to provide the correct prefixes to your CSS, based on your project's targeted browsers.
+
+- **Unit testing with Mocha** - Supports unit testing for Vue's Single File Components and JavaScript modules, without the need to sacrifice ES5+ syntax (thanks to [mochapack](https://sysgears.github.io/mochapack/)).
 
 - **Environment Variables** - Using [dotenv](https://www.npmjs.com/package/dotenv), the project can have a default environment configuration, that each developer can override so that it best fits their dev environment and tasking. With [dotenv-expand](https://www.npmjs.com/package/dotenv-expand), we can expand this ability to production environments, as well!
 
@@ -18,6 +20,16 @@ Most features were implemented (up to v3.4.1), including:
 ### Compiles and hot-reloads for development
 ```
 npm run start
+```
+
+### Compiles unit tests for Vue components and JavaScript modules.
+```
+npm run test
+```
+
+### Compiles *and hot-reloads* unit tests for Vue components and JavaScript modules.
+```
+npm run test:watch
 ```
 
 ### Compiles, minifies, and optimizes for production

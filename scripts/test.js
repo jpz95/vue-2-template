@@ -24,26 +24,33 @@ require('../src/setup-test-env.js');
 const createMochapack = require('mochapack').default;
 const optionsFromParsedArgs = require('mochapack/lib/cli/argsParser/optionsFromParsedArgs').default;
 
-// Where to look for our test files
-// (relative to the working directory of the node process).
-const fileGlob = 'src/**/*.spec.js';
-
 async function getMochapack(cliArgs) {
   const cliOptions = await optionsFromParsedArgs(cliArgs);
 
   const mochapack = createMochapack(cliOptions);
-  mochapack.addEntry(fileGlob);
+  cliArgs.mocha.files.forEach((file) => {
+    mochapack.addEntry(file);
+  });
 
   return mochapack;
 }
 
-function runTestRunner(mochapack) {
-  // TODO create 'watch' variable that pulls from cli args.
-  if (mochapack.options.mocha.cli.watch) {
+function runTestRunner({ mochapack, watch }) {
+  if (watch) {
     return mochapack.watch();
   }
   return mochapack.run();
 }
+
+// TODO use yargs, for fun
+const nodeCliArgs = process.argv.slice(2);
+const watchArr = nodeCliArgs.filter((cliArg) => cliArg === '--watch');
+
+const watch = watchArr.length > 0;
+
+// Where to look for our test files
+// (relative to the working directory of the node process).
+const fileGlob = 'src/**/*.spec.js';
 
 // Available configurations supported by mochapack.
 // @see node_modules/mochapack/src/cli/argsParser/parseArgv/types
@@ -55,8 +62,7 @@ const cliArgs = {
     // Note: path relative to test.js.
     require: ['../src/setup-test-env.js'],
     ui: 'bdd',
-    // TODO make it change based on cli arg (--watch)
-    watch: false,
+    watch,
     watchIgnore: ['node_modules', '.git'],
   },
   webpack: {
@@ -71,6 +77,6 @@ const cliArgs = {
 
 getMochapack(cliArgs).then(
   (mochapack) => {
-    runTestRunner(mochapack);
+    runTestRunner({ mochapack, watch });
   },
 );
