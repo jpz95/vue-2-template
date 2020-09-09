@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import Test from './components/test.vue';
+import Test from './test.vue';
 
 const wrapper = mount(Test);
 
