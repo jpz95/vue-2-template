@@ -15,7 +15,6 @@ const styleTypes = {
   cssModules: {
     test: /\.css$/,
   },
-  // TODO define SCSS options
   scss: {
     test: /\.scss$/,
     exclude: /\.module\.scss$/,
@@ -63,7 +62,9 @@ const getStyleLoaders = ({
         // https://github.com/facebook/create-react-app/issues/2677
         ident: 'postcss',
         plugins: () => [
+          // eslint-disable-next-line global-require
           require('postcss-flexbugs-fixes'),
+          // eslint-disable-next-line global-require
           require('postcss-preset-env')({
             autoprefixer: {
               flexbox: 'no-2009',
@@ -90,13 +91,10 @@ const getStyleLoaders = ({
       loaders.push(
         {
           loader: require.resolve(name),
-          options: Object.assign(
-            {},
-            {
-              sourceMap: true,
-            },
-            options,
-          ),
+          options: {
+            sourceMap: true,
+            ...options,
+          },
         },
       );
     });
