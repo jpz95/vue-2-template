@@ -38,6 +38,8 @@ const moduleFileExtensions = [
   'js',
   'vue',
   'json',
+  'css',
+  'scss',
 ];
 
 // Resolve file paths in the same order as webpack

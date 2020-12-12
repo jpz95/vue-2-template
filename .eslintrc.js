@@ -36,8 +36,8 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        moduleDirectory: ['node_modules', 'src/'],
-        extensions: ['.mjs', '.js', '.json', '.vue'],
+        moduleDirectory: ['node_modules', 'src'],
+        extensions: ['.mjs', '.js', '.json', '.vue', '.css', '.scss'],
       },
     },
   },
