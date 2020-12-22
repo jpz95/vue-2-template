@@ -1,6 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const paths = require('../../utils/paths');
+const paths = require('../utils/paths');
 
 const styleTypes = {
   css: {

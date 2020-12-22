@@ -1,6 +1,6 @@
 const path = require('path');
 
-const paths = require('../../utils/paths');
+const paths = require('../utils/paths');
 
 // eslint-disable-next-line import/no-dynamic-require
 const appPackageJson = require(paths.appPackageJson);

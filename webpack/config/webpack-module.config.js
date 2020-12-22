@@ -1,5 +1,5 @@
 const stylesUtil = require('./_styles-util');
-const paths = require('../../utils/paths');
+const paths = require('../utils/paths');
 
 const configureEslintLoader = () => ({
   test: /\.(js|mjs|vue)$/,

@@ -4,8 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-const paths = require('../../utils/paths');
-const getEnvironmentVariables = require('../../utils/load-env');
+const paths = require('../utils/paths');
+const getEnvironmentVariables = require('../utils/load-env');
 
 module.exports = (envState) => {
   const { isEnvDevelopment, isEnvTest, isEnvProduction } = envState;

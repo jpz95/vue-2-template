@@ -1,5 +1,5 @@
-const modules = require('../../utils/modules');
-const paths = require('../../utils/paths');
+const modules = require('../utils/modules');
+const paths = require('../utils/paths');
 
 module.exports = () => ({
   // This allows you to set a fallback for where Webpack should look for modules.
