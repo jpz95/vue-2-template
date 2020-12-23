@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 const getPublicUrlOrPath = require('./get-public-or-path');
-const settings = require('../webpack.settings');
+const settings = require('../../webpack.settings');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
