@@ -7,11 +7,11 @@
 
 const nodeExternals = require('webpack-node-externals');
 
-const webpackOutputConfig = require('./config/output/webpack-output.config');
-const webpackOptimizationConfig = require('./config/optimization/webpack-optimization.config');
-const webpackModuleConfig = require('./config/module/webpack-module.config');
-const webpackPluginsConfig = require('./config/plugins/webpack-plugins.config');
-const webpackResolveConfig = require('./config/resolve/webpack-resolve.config');
+const webpackOutputConfig = require('./config/webpack-output.config');
+const webpackOptimizationConfig = require('./config/webpack-optimization.config');
+const webpackModuleConfig = require('./config/webpack-module.config');
+const webpackPluginsConfig = require('./config/webpack-plugins.config');
+const webpackResolveConfig = require('./config/webpack-resolve.config');
 const getEnvState = require('./utils/get-env-state');
 const paths = require('./utils/paths');
 
