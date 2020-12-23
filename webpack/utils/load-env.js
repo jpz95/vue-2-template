@@ -12,6 +12,7 @@ const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 
 const paths = require('./paths');
+const { appPrefix } = require('../../webpack.settings');
 
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
@@ -65,13 +66,13 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
   .map((folder) => path.resolve(appDirectory, folder))
   .join(path.delimiter);
 
-// Grab NODE_ENV and APP_* environment variables and prepare them to be
+// Grab NODE_ENV and app specific environment variables and prepare them to be
 // injected into the application via DefinePlugin in Webpack configuration.
-const APP = /^APP_/i;
+const appRegex = new RegExp(`^${appPrefix}`, 'i');
 
 function getEnvironmentVariables(publicUrl) {
   const raw = Object.keys(process.env)
-    .filter((key) => APP.test(key))
+    .filter((key) => appRegex.test(key))
     .reduce(
       (env, key) => {
         // eslint-disable-next-line no-param-reassign
