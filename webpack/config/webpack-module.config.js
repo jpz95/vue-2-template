@@ -18,7 +18,7 @@ const configureEslintLoader = () => ({
 });
 
 // Process application JS with Babel.
-const configureBabelLoader = () => ({
+const configureBabelLoader = ({ isEnvProduction }) => ({
   test: /\.(js|mjs)$/,
   include: paths.appSrc,
   use: {
@@ -31,8 +31,8 @@ const configureBabelLoader = () => ({
       // TODO update to babel 7, there might be a mismatch
       // GZip compression has barely any benefits, for either modes.
       // https://github.com/facebook/create-react-app/issues/6846
-      // cacheCompression: false,
-      // compact: isEnvProduction,
+      cacheCompression: false,
+      compact: isEnvProduction,
     },
   },
 });
@@ -121,7 +121,7 @@ module.exports = (envState) => {
           configureImageLoader(imageInlineSizeLimit),
           configureMediaLoader(imageInlineSizeLimit),
           configureFontLoader(imageInlineSizeLimit),
-          configureBabelLoader(),
+          configureBabelLoader(envState),
           {
             test: /\.css$/,
             oneOf: [
