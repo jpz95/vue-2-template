@@ -18,7 +18,7 @@ const configureEslintLoader = () => ({
 });
 
 // Process application JS with Babel.
-const configureBabelLoader = ({ isEnvProduction }) => ({
+const configureBabelLoaderSrc = ({ isEnvProduction }) => ({
   test: /\.(js|mjs)$/,
   include: paths.appSrc,
   use: {
@@ -28,11 +28,43 @@ const configureBabelLoader = ({ isEnvProduction }) => ({
       // It enables caching results in ./node_modules/.cache/babel-loader/
       // directory for faster rebuilds.
       cacheDirectory: true,
-      // TODO update to babel 7, there might be a mismatch
       // GZip compression has barely any benefits, for either modes.
       // https://github.com/facebook/create-react-app/issues/6846
       cacheCompression: false,
       compact: isEnvProduction,
+    },
+  },
+});
+
+// Process any JS outside of the app with Babel.
+// Unlike the application JS, we only compile the standard ES features.
+const configureBabelLoaderDependencies = ({ shouldUseSourceMap }) => ({
+  test: /\.(js|mjs)$/,
+  exclude: /@babel(?:\/|\\{1,2})runtime/,
+  use: {
+    loader: 'babel-loader',
+    options: {
+      babelrc: false,
+      configFile: false,
+      compact: false,
+      presets: [
+        [
+          require.resolve('babel-preset-react-app/dependencies'),
+          { helpers: true },
+        ],
+      ],
+      // This is a feature of `babel-loader` for webpack (not Babel itself).
+      // It enables caching results in ./node_modules/.cache/babel-loader/
+      // directory for faster rebuilds.
+      cacheDirectory: true,
+      // GZip compression has barely any benefits, for either modes.
+      // https://github.com/facebook/create-react-app/issues/6846
+      cacheCompression: false,
+      // Babel sourcemaps are needed for debugging into node_modules
+      // code.  Without the options below, debuggers like VSCode
+      // show incorrect code and set breakpoints on the wrong lines.
+      sourceMaps: shouldUseSourceMap,
+      inputSourceMap: shouldUseSourceMap,
     },
   },
 });
@@ -121,7 +153,8 @@ module.exports = (envState) => {
           configureImageLoader(imageInlineSizeLimit),
           configureMediaLoader(imageInlineSizeLimit),
           configureFontLoader(imageInlineSizeLimit),
-          configureBabelLoader(envState),
+          configureBabelLoaderSrc(envState),
+          configureBabelLoaderDependencies(envState),
           {
             test: /\.css$/,
             oneOf: [
